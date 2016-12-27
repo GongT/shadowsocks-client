@@ -21,9 +21,11 @@ build.systemInstall('python', 'py-pip', 'libsodium');
 
 if (JsonEnv && JsonEnv.gfw) {
 	build.isInChina(JsonEnv.gfw.isInChina);
+	
+	const fast_open = new_kernel();
 	require('fs').writeFileSync(
 		require('path').resolve(__dirname, '../config.json'),
-		JSON.stringify(JsonEnv.gfw.proxy, null, 8)
+		JSON.stringify(Object.assign({fast_open}, JsonEnv.gfw.shadowsocks), null, 8)
 	);
 	build.startupCommand('/usr/bin/sslocal', '--pid-file', '/var/run/ss-client.pid', '--fast-open', '-c', '/data/config.json');
 } else {
@@ -39,3 +41,21 @@ build.disablePlugin(EPlugins.jenv);
 
 build.prependDockerFile('build.Dockerfile');
 // build.appendDockerFile('/path/to/docker/file');
+
+function new_kernel() {
+	const os = require('os');
+	if (os.platform() !== 'linux') {
+		return false;
+	}
+	const ver = /^(\d+)\.(\d+)/.exec(os.release());
+	if (!ver) {
+		return false;
+	}
+	if (ver[1] > 3) {
+		return true;
+	}
+	if (ver[1] < 3) {
+		return false;
+	}
+	return ver[2] >= 16;
+}
