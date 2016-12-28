@@ -42,6 +42,8 @@ build.disablePlugin(EPlugins.jenv);
 build.prependDockerFile('build.Dockerfile');
 // build.appendDockerFile('/path/to/docker/file');
 
+build.volume('./privoxy', '/etc/privoxy');
+
 function new_kernel() {
 	const os = require('os');
 	if (os.platform() !== 'linux') {
