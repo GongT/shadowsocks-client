@@ -16,25 +16,29 @@ build.projectName(projectName);
 build.domainName(projectName + '.gongt');
 
 build.noDataCopy();
+
+build.isInChina(JsonEnv.gfw.isInChina);
 build.systemInstallMethod('apk');
-build.systemInstall('python', 'py-pip', 'libsodium', 'privoxy');
+build.systemInstall('python', 'py-pip', 'libsodium');
+
+const args = ['--pid-file', '/var/run/ss-client.pid'];
 
 const fast_open = new_kernel();
 if (JsonEnv && JsonEnv.gfw) {
-	build.isInChina(JsonEnv.gfw.isInChina);
-	
 	require('fs').writeFileSync(
 		require('path').resolve(__dirname, '../config.json'),
 		JSON.stringify(Object.assign({fast_open}, JsonEnv.gfw.shadowsocks), null, 8)
 	);
-	build.startupCommand('/usr/sbin/privoxy /etc/privoxy/config ; /usr/bin/sslocal --pid-file /var/run/ss-client.pid -c /data/config.json');
-} else {
-	build.startupCommand(`/usr/sbin/privoxy /etc/privoxy/config ; /usr/bin/sslocal --pid-file /var/run/ss-client.pid ${fast_open? '--fast-open' : ''}`);
+	
+	args.push('-c');
+	args.push('./config.json');
+} else if (fast_open) {
+	args.push('--fast-open');
 }
-build.shellCommand('/bin/sh', '-c');
+build.startupCommand.apply(build, args);
+build.shellCommand('/usr/bin/sslocal');
 // build.stopCommand('stop.sh');
 
-build.forwardPort(8118, 'tcp').publish(8080);
 build.forwardPort(7070, 'tcp').publish(7070);
 build.forwardPort(7070, 'udp').publish(7070);
 
@@ -42,8 +46,6 @@ build.disablePlugin(EPlugins.jenv);
 
 build.prependDockerFile('build.Dockerfile');
 // build.appendDockerFile('/path/to/docker/file');
-
-build.volume('./privoxy', '/etc/privoxy');
 
 function new_kernel() {
 	const os = require('os');
