@@ -34,7 +34,8 @@ if (JsonEnv && JsonEnv.gfw) {
 build.shellCommand('/bin/sh', '-c');
 // build.stopCommand('stop.sh');
 
-build.forwardPort(8118, 'tcp').publish(7070);
+build.forwardPort(8118, 'tcp').publish(8080);
+build.forwardPort(7070, 'tcp').publish(7070);
 build.forwardPort(7070, 'udp').publish(7070);
 
 build.disablePlugin(EPlugins.jenv);
