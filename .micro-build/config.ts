@@ -19,24 +19,47 @@ build.noDataCopy();
 
 build.isInChina(JsonEnv.gfw.isInChina);
 build.systemInstallMethod('apk');
-build.systemInstall('python', 'py-pip', 'libsodium');
-
-const args = ['--pid-file', '/var/run/ss-client.pid'];
+build.systemInstall('pcre');
 
 const fast_open = new_kernel();
+let args = [];
 if (JsonEnv && JsonEnv.gfw) {
 	require('fs').writeFileSync(
 		require('path').resolve(__dirname, '../config.json'),
-		JSON.stringify(Object.assign({fast_open}, JsonEnv.gfw.shadowsocks), null, 8)
+		JSON.stringify(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}), null, 8)
+	);
+	args = ['/usr/local/bin/ss-local', '-c', '/data/config.json'];
+} else {
+	build.environmentVariable('SERVER_ADDR', '');
+	build.environmentVariable('SERVER_PORT', '');
+	build.environmentVariable('LISTEN_ADDR', '0.0.0.0');
+	build.environmentVariable('LISTEN_PORT', '7070');
+	build.environmentVariable('METHOD', 'aes-256-cfb');
+	build.environmentVariable('TIMEOUT', '60');
+	build.environmentVariable('PASSWORD',
+		require('crypto').createHash('md5').update(Math.random().toString(15)).digest('utf-8')
 	);
 	
-	args.push('-c');
-	args.push('./config.json');
-} else if (fast_open) {
-	args.push('--fast-open');
+	args = [
+		'/usr/local/bin/ss-local',
+		'-s', "$SERVER_ADDR",
+		'-p', "$SERVER_PORT",
+		'-b', "$LISTEN_ADDR",
+		'-l', "$LISTEN_PORT",
+		'-m', "$METHOD",
+		'-k', "$PASSWORD",
+		'-t', "$TIMEOUT",
+		'-d', "$DNS_ADDR",
+		'-u',
+		'-A',
+	];
+	if (fast_open) {
+		args.push('--fast-open');
+	}
 }
-build.startupCommand.apply(build, args);
-build.shellCommand('/usr/bin/sslocal');
+
+build.startupCommand('');
+build.shellCommand.apply(build, args);
 // build.stopCommand('stop.sh');
 
 build.forwardPort(7070, 'tcp').publish(7070);
@@ -45,7 +68,7 @@ build.forwardPort(7070, 'udp').publish(7070);
 build.disablePlugin(EPlugins.jenv);
 
 build.prependDockerFile('build.Dockerfile');
-// build.appendDockerFile('/path/to/docker/file');
+build.appendDockerFile('config.Dockerfile');
 
 function new_kernel() {
 	const os = require('os');
