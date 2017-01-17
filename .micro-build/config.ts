@@ -19,7 +19,7 @@ build.noDataCopy();
 
 build.isInChina(JsonEnv.gfw.isInChina);
 build.systemInstallMethod('apk');
-build.systemInstall('pcre');
+build.systemInstall('pcre', 'openssl');
 
 const fast_open = new_kernel();
 let args = [];
