@@ -31,7 +31,7 @@ if (JsonEnv && JsonEnv.gfw) {
 		require('path').resolve(__dirname, '../config.json'),
 		JSON.stringify(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}), null, 8)
 	);
-	args = ['/usr/local/bin/ss-local', '-c', '/data/config.json'];
+	args = ['/usr/local/bin/ss-local', '-vv', '-c', '/data/config.json'];
 } else {
 	build.environmentVariable('SERVER_ADDR', '');
 	build.environmentVariable('SERVER_PORT', '');
