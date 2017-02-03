@@ -2,8 +2,9 @@ RUN set -ex && \
 	update-resolve && \
 	cat /etc/apk/repositories && \
 	ping -c 2 mirrors.aliyun.com && \
-	apk add libsodium libev udns && \
+	apk add libsodium libev udns mbedtls && \
 	apk add --virtual TMP    \
+							file \
 							libsodium-dev \
 							udns-dev \
 							libev-dev \
@@ -13,7 +14,7 @@ RUN set -ex && \
 							build-base \
 							libtool \
 							linux-headers \
-							openssl-dev \
+							mbedtls-dev \
 							pcre-dev && \
 	mkdir -p /tmp/install-ss && \
 		cd /tmp/install-ss && \
