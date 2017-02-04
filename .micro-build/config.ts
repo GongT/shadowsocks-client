@@ -92,7 +92,7 @@ function new_kernel() {
 
 function buildConfigFile(config) {
 	const kcptunConfig = JsonEnv.gfw['kcptun'];
-	if (true || !kcptunConfig) {
+	if (!kcptunConfig) {
 		return config;
 	}
 	
