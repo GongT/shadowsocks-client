@@ -27,11 +27,13 @@ build.systemInstall('pcre', 'openssl');
 const fast_open = new_kernel();
 let args = [];
 if (JsonEnv && JsonEnv.gfw) {
+	const config = buildConfigFile(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}));
+	
 	require('fs').writeFileSync(
 		require('path').resolve(__dirname, '../config.json'),
-		JSON.stringify(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}), null, 8)
+		JSON.stringify(config, null, 8)
 	);
-	args = ['/usr/local/bin/ss-local', '-vv', '-c', '/data/config.json'];
+	args = ['-v', '-c', '/data/config.json'];
 } else {
 	build.environmentVariable('SERVER_ADDR', '');
 	build.environmentVariable('SERVER_PORT', '');
@@ -44,7 +46,6 @@ if (JsonEnv && JsonEnv.gfw) {
 	);
 	
 	args = [
-		'/usr/local/bin/ss-local',
 		'-s', "$SERVER_ADDR",
 		'-p', "$SERVER_PORT",
 		'-b', "$LISTEN_ADDR",
@@ -55,18 +56,16 @@ if (JsonEnv && JsonEnv.gfw) {
 		'-d', "$DNS_ADDR",
 		'-u',
 		'-A',
+		'-v',
 	];
 	if (fast_open) {
 		args.push('--fast-open');
 	}
 }
 
-build.startupCommand('');
-build.shellCommand.apply(build, args);
+build.startupCommand.apply(build, args);
+build.shellCommand('/usr/bin/sslocal');
 // build.stopCommand('stop.sh');
-
-build.forwardPort(7070, 'tcp').publish(7070);
-build.forwardPort(7070, 'udp').publish(7070);
 
 build.disablePlugin(EPlugins.jenv);
 
@@ -89,4 +88,20 @@ function new_kernel() {
 		return false;
 	}
 	return ver[2] >= 16;
+}
+
+function buildConfigFile(config) {
+	const kcptunConfig = JsonEnv.gfw['kcptun'];
+	if (true || !kcptunConfig) {
+		return config;
+	}
+	
+	build.dependService('kcptun-client', 'https://github.com/GongT/shadowsocks-client.git');
+	config.server = 'kcptun-client';
+	config.server_port = kcptunConfig.server_port;
+	
+	build.forwardPort(config.local_port, 'tcp').publish(config.local_port);
+	build.dockerRunArgument('--dns=${HOST_LOOP_IP}');
+	
+	return config;
 }

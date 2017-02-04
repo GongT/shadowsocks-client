@@ -11,7 +11,7 @@ RUN set -ex && \
 			libsodium \
 			pcre \
 			udns && \
-	apk add --virtual TMP
+	apk add --virtual TMP \
 			autoconf \
 			automake \
 			build-base \
