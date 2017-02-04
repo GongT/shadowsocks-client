@@ -64,7 +64,7 @@ if (JsonEnv && JsonEnv.gfw) {
 }
 
 build.startupCommand.apply(build, args);
-build.shellCommand('/usr/bin/sslocal');
+build.shellCommand('/usr/bin/ss-local');
 // build.stopCommand('stop.sh');
 
 build.disablePlugin(EPlugins.jenv);
