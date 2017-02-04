@@ -96,7 +96,7 @@ function buildConfigFile(config) {
 		return config;
 	}
 	
-	build.dependService('kcptun-client', 'https://github.com/GongT/shadowsocks-client.git');
+	build.dependService('kcptun-client', 'https://github.com/GongT/kcptun-client.git');
 	config.server = 'kcptun-client';
 	config.server_port = kcptunConfig.server_port;
 	
