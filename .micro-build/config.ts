@@ -97,7 +97,7 @@ function buildConfigFile(config) {
 	}
 	
 	build.dependService('kcptun-client', 'https://github.com/GongT/kcptun-client.git');
-	config.server = 'kcptun-client';
+	config.server = `kcptun-client:${config.RemotePort}`;
 	config.server_port = kcptunConfig.server_port;
 	
 	build.forwardPort(config.local_port, 'tcp').publish(config.local_port);
