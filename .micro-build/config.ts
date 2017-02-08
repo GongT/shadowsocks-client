@@ -16,7 +16,7 @@ const projectName = 'shadowsocks-client';
 
 build.baseImage('alpine', 'latest');
 build.projectName(projectName);
-build.domainName(projectName + '.gongt');
+build.domainName(projectName + '.' + JsonEnv.baseDomainName);
 
 build.noDataCopy();
 
