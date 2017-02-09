@@ -27,11 +27,11 @@ RUN set -ex && \
 			udns-dev && \
 	mkdir -p /tmp/install-ss && \
 		cd /tmp/install-ss && \
-		curl -sSL $SS_URL | tar xz && \
+		curl -SL $SS_URL | tar xz && \
 		cd $SS_DIR && \
-		curl -sSL https://github.com/shadowsocks/ipset/archive/shadowsocks.tar.gz | \
+		curl -SL https://github.com/shadowsocks/ipset/archive/shadowsocks.tar.gz | \
 					tar xz --strip 1 -C libipset && \
-		curl -sSL https://github.com/shadowsocks/libcork/archive/shadowsocks.tar.gz | \
+		curl -SL https://github.com/shadowsocks/libcork/archive/shadowsocks.tar.gz | \
 					tar xz --strip 1 -C libcork && \
 			./autogen.sh && \
 			./configure --target=/usr/local --disable-documentation && \
