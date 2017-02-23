@@ -21,6 +21,7 @@ build.domainName(projectName + '.' + JsonEnv.baseDomainName);
 build.noDataCopy();
 
 build.isInChina(JsonEnv.gfw.isInChina);
+build.forceLocalDns();
 build.systemInstallMethod('apk');
 build.systemInstall('pcre', 'openssl');
 

@@ -11,6 +11,7 @@ npm-debug.log*
 coverage/
 typings
 !.*ignore
+!.gitinclude
 ### <<< END MICRO-BUILD SECTION
 
 config.json
