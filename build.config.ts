@@ -31,7 +31,7 @@ if (JsonEnv && JsonEnv.gfw) {
 	const config = buildConfigFile(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}));
 	
 	require('fs').writeFileSync(
-		require('path').resolve(__dirname, '../config.json'),
+		require('path').resolve(__dirname, 'config.json'),
 		JSON.stringify(config, null, 8)
 	);
 	args = ['-v', '-c', '/data/config.json'];
