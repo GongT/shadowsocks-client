@@ -14,64 +14,33 @@ declare const helper: MicroBuildHelper;
 
 const projectName = 'shadowsocks-client';
 
-build.baseImage('alpine', 'latest');
+build.baseImage('gists/shadowsocks-libev', 'latest');
 build.projectName(projectName);
 build.domainName(projectName + '.' + JsonEnv.baseDomainName);
-
-build.noDataCopy();
 
 build.isInChina(JsonEnv.gfw.isInChina);
 build.forceLocalDns();
 build.systemInstallMethod('apk');
-build.systemInstall('pcre', 'openssl');
+// build.systemInstall('pcre', 'openssl');
+
+build.forwardPort(7070);
 
 const fast_open = new_kernel();
-let args = [];
-if (JsonEnv && JsonEnv.gfw) {
-	const config = buildConfigFile(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}));
-	
-	require('fs').writeFileSync(
-		require('path').resolve(__dirname, 'config.json'),
-		JSON.stringify(config, null, 8)
-	);
-	args = ['-v', '-c', '/data/config.json'];
-} else {
-	build.environmentVariable('SERVER_ADDR', '');
-	build.environmentVariable('SERVER_PORT', '');
-	build.environmentVariable('LISTEN_ADDR', '0.0.0.0');
-	build.environmentVariable('LISTEN_PORT', '7070');
-	build.environmentVariable('METHOD', 'aes-256-cfb');
-	build.environmentVariable('TIMEOUT', '60');
-	build.environmentVariable('PASSWORD',
-		require('crypto').createHash('md5').update(Math.random().toString(15)).digest('utf-8')
-	);
-	
-	args = [
-		'-s', "$SERVER_ADDR",
-		'-p', "$SERVER_PORT",
-		'-b', "$LISTEN_ADDR",
-		'-l', "$LISTEN_PORT",
-		'-m', "$METHOD",
-		'-k', "$PASSWORD",
-		'-t', "$TIMEOUT",
-		'-d', "$DNS_ADDR",
-		'-u',
-		'-A',
-		'-v',
-	];
-	if (fast_open) {
-		args.push('--fast-open');
-	}
-}
+const config = buildConfigFile(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}));
 
-build.startupCommand.apply(build, args);
-build.shellCommand('/usr/local/bin/ss-local');
+require('fs').writeFileSync(
+	require('path').resolve(__dirname, 'config.json'),
+	JSON.stringify(config, null, 8)
+);
+
+build.startupCommand('-v', '-c', '/data/config.json');
+build.shellCommand('/usr/bin/ss-local');
 // build.stopCommand('stop.sh');
 
 build.disablePlugin(EPlugins.jenv);
 
-build.prependDockerFile('build.Dockerfile');
-build.appendDockerFile('config.Dockerfile');
+build.noDataCopy();
+build.appendDockerFileContent('COPY config.json /data/config.json');
 
 function new_kernel() {
 	const os = require('os');
