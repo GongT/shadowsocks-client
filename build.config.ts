@@ -40,7 +40,9 @@ build.shellCommand('/usr/bin/ss-local');
 build.disablePlugin(EPlugins.jenv);
 
 build.noDataCopy();
-build.appendDockerFileContent('COPY config.json /data/config.json');
+build.appendDockerFileContent(`COPY config.json /data/config.json
+USER 0`);
+build.volume('/dev/urandom', '/dev/urandom');
 
 function new_kernel() {
 	const os = require('os');
