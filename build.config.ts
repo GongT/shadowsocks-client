@@ -33,15 +33,17 @@ require('fs').writeFileSync(
 	JSON.stringify(config, null, 8)
 );
 
-build.startupCommand('-v', '-c', '/data/config.json');
-build.shellCommand('/usr/bin/ss-local');
-// build.stopCommand('stop.sh');
+build.startupCommand('./start.sh');
 
 build.disablePlugin(EPlugins.jenv);
 
 build.noDataCopy();
-build.appendDockerFileContent(`COPY config.json /data/config.json
-USER 0`);
+
+build.appendDockerFileContent(`
+COPY config.json /data/config.json
+COPY start.sh /data/start.sh
+USER 0
+`);
 build.volume('/dev/urandom', '/dev/urandom');
 
 function new_kernel() {
