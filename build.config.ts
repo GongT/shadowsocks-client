@@ -1,6 +1,6 @@
-import {MicroBuildHelper} from "./.micro-build/x/microbuild-helper";
-import {MicroBuildConfig, ELabelNames, EPlugins} from "./.micro-build/x/microbuild-config";
 import {JsonEnv} from "./.jsonenv/_current_result";
+import {EPlugins, MicroBuildConfig} from "./.micro-build/x/microbuild-config";
+import {MicroBuildHelper} from "./.micro-build/x/microbuild-helper";
 declare const build: MicroBuildConfig;
 declare const helper: MicroBuildHelper;
 /*
@@ -26,11 +26,17 @@ build.systemInstallMethod('apk');
 build.forwardPort(7070);
 
 const fast_open = new_kernel();
-const config = buildConfigFile(Object.assign(JsonEnv.gfw.shadowsocks, {fast_open}));
+try {
+	Object.assign(JsonEnv.gfw.shadowsocks, {fast_open});
+} catch (e) {
+	console.error(JsonEnv.gfw);
+	throw e;
+}
+const config = buildConfigFile(JsonEnv.gfw.shadowsocks);
 
 require('fs').writeFileSync(
 	require('path').resolve(__dirname, 'config.json'),
-	JSON.stringify(config, null, 8)
+	JSON.stringify(config, null, 8),
 );
 
 build.startupCommand('./start.sh');
