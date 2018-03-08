@@ -14,6 +14,7 @@ screen.*
 package-lock.json
 !.*ignore
 !.gitinclude
+!.babelrc
 ### <<< END MICRO-BUILD SECTION
 
 config.json

@@ -1,11 +1,12 @@
-import {JsonEnv} from "./.jsonenv/_current_result";
+/// <reference path="./.jsonenv/_current_result.json.d.ts"/>
+import {JsonEnv} from "@gongt/jenv-data";
 import {EPlugins, MicroBuildConfig} from "./.micro-build/x/microbuild-config";
 import {MicroBuildHelper} from "./.micro-build/x/microbuild-helper";
 declare const build: MicroBuildConfig;
 declare const helper: MicroBuildHelper;
 /*
  +==================================+
- | <**DON'T EDIT ABOVE THIS LINE**> |
+ |  **DON'T EDIT ABOVE THIS LINE**  |
  | THIS IS A PLAIN JAVASCRIPT FILE  |
  |   NOT A TYPESCRIPT OR ES6 FILE   |
  |    ES6 FEATURES NOT AVAILABLE    |
@@ -78,7 +79,7 @@ function buildConfigFile(config) {
 	
 	build.dependService('kcptun-client', 'https://github.com/GongT/kcptun-client.git');
 	config.server = 'kcptun-client';
-	config.server_port = kcptunConfig.RemotePort;
+	config.server_port = 6060;
 	
 	build.forwardPort(config.local_port, 'tcp').publish(config.local_port);
 	build.dockerRunArgument('--dns=${HOST_LOOP_IP}');
